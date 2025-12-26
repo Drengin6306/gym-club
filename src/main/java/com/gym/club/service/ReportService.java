@@ -339,7 +339,8 @@ public class ReportService {
         }
 
         // 3. 教练收入贡献（私教课收入）
-        // 需要查询该教练的私教课支付记录
+        BigDecimal totalRevenue = paymentRecordMapper.sumRevenueByCoachId(coachId);
+        result.put("revenueGenerated", totalRevenue != null ? totalRevenue : BigDecimal.ZERO);
 
         return result;
     }

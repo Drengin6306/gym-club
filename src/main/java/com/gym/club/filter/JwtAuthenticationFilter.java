@@ -38,6 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = claims.getSubject();
                 String role = claims.get("role", String.class);
 
+                // Debug log
+                System.out.println("JWT Auth - Username: " + username + ", Role: " + role);
+
                 // Prefix role with "ROLE_" for Spring Security
                 String finalRole = role.startsWith("ROLE_") ? role : "ROLE_" + role.toUpperCase();
 
@@ -45,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         username, null, Collections.singletonList(new SimpleGrantedAuthority(finalRole)));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                System.out.println("JWT Auth - Invalid Token: " + token);
             }
         }
 

@@ -22,6 +22,12 @@ public class AuthService {
     @Autowired
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    @org.springframework.beans.factory.annotation.Value("${gym.admin.username}")
+    private String adminUsername;
+
+    @org.springframework.beans.factory.annotation.Value("${gym.admin.password}")
+    private String adminPassword;
+
     /**
      * 简单登录验证
      */
@@ -88,9 +94,9 @@ public class AuthService {
             response.setToken(jwtUtils.generateToken(username, "COACH", coach.getId()));
         }
 
-        // 管理员登录（硬编码）
+        // 管理员登录（配置）
         else if ("admin".equalsIgnoreCase(role)) {
-            if (!"admin".equals(username) || !"admin123".equals(password)) {
+            if (!adminUsername.equals(username) || !adminPassword.equals(password)) {
                 throw new RuntimeException("管理员账号或密码错误");
             }
             response = new LoginResponse(
@@ -98,7 +104,7 @@ public class AuthService {
                     "admin",
                     "ADMIN",
                     "系统管理员");
-            response.setToken(jwtUtils.generateToken("admin", "ADMIN", 0));
+            response.setToken(jwtUtils.generateToken(adminUsername, "ADMIN", 0));
         } else {
             throw new RuntimeException("未知角色类型");
         }

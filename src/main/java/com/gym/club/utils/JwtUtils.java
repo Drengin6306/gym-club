@@ -7,14 +7,25 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import org.springframework.beans.factory.annotation.Value;
+import jakarta.annotation.PostConstruct;
+
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
 
-    // Using a strong key for HS256
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Value("${gym.jwt.secret}")
+    private String secret;
+
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
 
     public String generateToken(String username, String role, Integer userId) {
@@ -24,7 +35,7 @@ public class JwtUtils {
                 .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
