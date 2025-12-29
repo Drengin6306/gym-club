@@ -34,3 +34,8 @@ build/
 
 ### gym-frontend ###
 /gym-frontend
+
+### docker ###
+gym-frontend.tar.gz
+gym-backend.tar.gz
+
